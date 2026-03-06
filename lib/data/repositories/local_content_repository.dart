@@ -13,7 +13,9 @@ class LocalContentRepository implements IContentRepository {
     try {
       return await dataSource.getRandomQuestion();
     } catch (e) {
-      throw const ContentNotFoundFailure('No questions available in local storage');
+      throw const ContentNotFoundFailure(
+        'No questions available in local storage',
+      );
     }
   }
 
@@ -22,7 +24,9 @@ class LocalContentRepository implements IContentRepository {
     try {
       return await dataSource.getQuestionsByCategory(category);
     } catch (e) {
-      throw const ContentNotFoundFailure('No questions found for category: $category');
+      throw ContentNotFoundFailure(
+        'No questions found for category: $category',
+      );
     }
   }
 

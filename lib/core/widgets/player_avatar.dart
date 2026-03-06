@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../domain/entities/player.dart';
 import '../constants/app_colors.dart';
-import '../domain/entities/player.dart';
 
 /// Player avatar widget with status indicator
 class PlayerAvatar extends StatelessWidget {
@@ -124,10 +123,8 @@ class PlayerAvatarsGroup extends StatelessWidget {
         ...players.asMap().entries.map((entry) {
           final index = entry.key;
           final player = entry.value;
-          return Padding(
-            padding: EdgeInsets.only(
-              right: index < players.length - 1 ? -16 : 0,
-            ),
+          return Transform.translate(
+            offset: Offset(index < players.length - 1 ? -16 : 0, 0),
             child: PlayerAvatar(
               player: player,
               size: size,

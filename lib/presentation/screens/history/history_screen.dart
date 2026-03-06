@@ -35,6 +35,7 @@ class HistoryScreen extends StatelessWidget {
                   _buildSectionHeader(AppStrings.today),
                   const SizedBox(height: AppSpacing.sm),
                   _buildHistoryCard(
+                    context,
                     gameType: AppStrings.roulette,
                     title: 'Winner: Pizza Night',
                     timestamp: '2h ago',
@@ -43,6 +44,7 @@ class HistoryScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   _buildHistoryCard(
+                    context,
                     gameType: AppStrings.thisOrThat,
                     title: '"70% Match with Sarah"',
                     subtitle: 'Beach vs Mountains',
@@ -54,6 +56,7 @@ class HistoryScreen extends StatelessWidget {
                   _buildSectionHeader(AppStrings.yesterday),
                   const SizedBox(height: AppSpacing.sm),
                   _buildHistoryCard(
+                    context,
                     gameType: 'Daily Question',
                     title: 'What\'s your dream travel destination?',
                     timestamp: '1d ago',
@@ -61,6 +64,7 @@ class HistoryScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   _buildHistoryCard(
+                    context,
                     gameType: AppStrings.miniGames,
                     title: 'Word Blitz Mastery',
                     subtitle: 'Score: 2,450 pts (New High!)',
@@ -187,7 +191,8 @@ class HistoryScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHistoryCard({
+  Widget _buildHistoryCard(
+    BuildContext context, {
     required String gameType,
     required String title,
     String? subtitle,

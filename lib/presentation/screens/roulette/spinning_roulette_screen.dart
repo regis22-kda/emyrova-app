@@ -230,7 +230,7 @@ class _SpinningRouletteScreenState extends State<SpinningRouletteScreen>
       height: 320,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        gradient: const ConicGradient(
+        gradient: const SweepGradient(
           colors: [
             AppColors.primary,
             AppColors.primaryLight,

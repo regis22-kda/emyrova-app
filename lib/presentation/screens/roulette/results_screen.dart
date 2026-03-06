@@ -27,7 +27,7 @@ class RouletteResultsScreen extends StatelessWidget {
                     _buildCelebrationHeader(),
                     const SizedBox(height: AppSpacing.xxl),
                     // Winning card
-                    _buildWinningCard(),
+                    _buildWinningCard(context),
                     const SizedBox(height: AppSpacing.xxl),
                     // Action buttons
                     _buildActionButtons(context),
@@ -131,7 +131,7 @@ class RouletteResultsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildWinningCard() {
+  Widget _buildWinningCard(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(AppSpacing.radiusXl),

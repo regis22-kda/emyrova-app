@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/widgets/player_avatar.dart';
+import '../../../domain/entities/game_session.dart';
+import '../../../domain/entities/player.dart';
 import '../../providers/game_provider.dart';
 
 /// Pass the phone transition screen
@@ -15,7 +18,8 @@ class PassThePhoneScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final session = ref.watch(gameSessionProvider);
     final currentPlayer = session.currentPlayer;
-    final nextPlayerIndex = (session.players.indexOf(currentPlayer) + 1) % session.players.length;
+    final nextPlayerIndex =
+        (session.players.indexOf(currentPlayer) + 1) % session.players.length;
     final nextPlayer = session.players[nextPlayerIndex];
 
     return Scaffold(
@@ -37,19 +41,13 @@ class PassThePhoneScreen extends ConsumerWidget {
                     ),
                     child: IconButton(
                       onPressed: () => context.pop(),
-                      icon: const Icon(
-                        Icons.close,
-                        color: AppColors.primary,
-                      ),
+                      icon: const Icon(Icons.close, color: AppColors.primary),
                       padding: EdgeInsets.zero,
                     ),
                   ),
                   const Text(
                     AppStrings.appName,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   Container(
                     width: 40,
@@ -109,7 +107,7 @@ class PassThePhoneScreen extends ConsumerWidget {
                     _buildPlayerTransition(currentPlayer, nextPlayer),
                     const SizedBox(height: AppSpacing.xxl),
                     // Game info card
-                    _buildGameInfoCard(session),
+                    _buildGameInfoCard(context, session),
                     const SizedBox(height: AppSpacing.xl),
                     // Ready button
                     SizedBox(
@@ -121,7 +119,9 @@ class PassThePhoneScreen extends ConsumerWidget {
                         },
                         style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+                            borderRadius: BorderRadius.circular(
+                              AppSpacing.radiusLg,
+                            ),
                           ),
                           shadowColor: AppColors.shadowLight,
                           elevation: 8,
@@ -168,10 +168,7 @@ class PassThePhoneScreen extends ConsumerWidget {
             opacity: 0.4,
             child: Transform.scale(
               scale: 0.9,
-              child: PlayerAvatar(
-                player: currentPlayer,
-                size: 96,
-              ),
+              child: PlayerAvatar(player: currentPlayer, size: 96),
             ),
           ),
         ),
@@ -200,11 +197,7 @@ class PassThePhoneScreen extends ConsumerWidget {
                   color: AppColors.accentGreen,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
-                  Icons.check,
-                  color: Colors.white,
-                  size: 18,
-                ),
+                child: const Icon(Icons.check, color: Colors.white, size: 18),
               ),
             ),
           ),
@@ -222,15 +215,13 @@ class PassThePhoneScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildGameInfoCard(GameSession session) {
+  Widget _buildGameInfoCard(BuildContext context, GameSession session) {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
-        border: Border.all(
-          color: AppColors.borderLight.withOpacity(0.5),
-        ),
+        border: Border.all(color: AppColors.borderLight.withOpacity(0.5)),
       ),
       child: Row(
         children: [
@@ -265,10 +256,7 @@ class PassThePhoneScreen extends ConsumerWidget {
                 ),
                 const Text(
                   'Quickfire Trivia',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ],
             ),

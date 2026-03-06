@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/widgets/app_bottom_nav_bar.dart';
 import '../../../core/widgets/player_avatar.dart';
+import '../../../domain/entities/game_session.dart';
 import '../../../domain/usecases/compare_answers.dart';
 import '../../providers/game_provider.dart';
 
@@ -41,7 +43,9 @@ class QuestionResultsScreen extends ConsumerWidget {
                         ),
                         decoration: BoxDecoration(
                           color: AppColors.primary.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
+                          borderRadius: BorderRadius.circular(
+                            AppSpacing.radiusFull,
+                          ),
                         ),
                         child: Text(
                           'Question #${session.currentRound}',
@@ -90,20 +94,14 @@ class QuestionResultsScreen extends ConsumerWidget {
             ),
             child: IconButton(
               onPressed: () => context.pop(),
-              icon: const Icon(
-                Icons.close,
-                color: AppColors.primary,
-              ),
+              icon: const Icon(Icons.close, color: AppColors.primary),
               padding: EdgeInsets.zero,
             ),
           ),
           const Expanded(
             child: Text(
               AppStrings.resultsReveal,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
           ),
@@ -120,9 +118,7 @@ class QuestionResultsScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
-        border: Border.all(
-          color: AppColors.primary.withOpacity(0.1),
-        ),
+        border: Border.all(color: AppColors.primary.withOpacity(0.1)),
       ),
       child: const Text(
         '"If we won the lottery tomorrow, what is the first \'useless\' thing you\'d buy?"',
@@ -144,10 +140,12 @@ class QuestionResultsScreen extends ConsumerWidget {
         _buildPlayerAnswer(
           context,
           session.players[0],
-          answers.firstWhere(
-            (a) => a.playerId == session.players[0].id,
-            orElse: () => answers.first,
-          ).answer,
+          answers
+              .firstWhere(
+                (a) => a.playerId == session.players[0].id,
+                orElse: () => answers.first,
+              )
+              .answer,
           isLeft: true,
         ),
         const SizedBox(height: AppSpacing.lg),
@@ -155,10 +153,12 @@ class QuestionResultsScreen extends ConsumerWidget {
         _buildPlayerAnswer(
           context,
           session.players[1],
-          answers.firstWhere(
-            (a) => a.playerId == session.players[1].id,
-            orElse: () => answers.last,
-          ).answer,
+          answers
+              .firstWhere(
+                (a) => a.playerId == session.players[1].id,
+                orElse: () => answers.last,
+              )
+              .answer,
           isLeft: false,
         ),
       ],
@@ -174,7 +174,9 @@ class QuestionResultsScreen extends ConsumerWidget {
     return Align(
       alignment: isLeft ? Alignment.centerLeft : Alignment.centerRight,
       child: Column(
-        crossAxisAlignment: isLeft ? CrossAxisAlignment.start : CrossAxisAlignment.end,
+        crossAxisAlignment: isLeft
+            ? CrossAxisAlignment.start
+            : CrossAxisAlignment.end,
         children: [
           // Player info
           Row(
@@ -211,9 +213,15 @@ class QuestionResultsScreen extends ConsumerWidget {
             decoration: BoxDecoration(
               color: isLeft ? AppColors.primary : Theme.of(context).cardColor,
               borderRadius: BorderRadius.only(
-                topLeft: isLeft ? const Radius.circular(AppSpacing.radiusLg) : const Radius.circular(AppSpacing.radiusLg),
-                topRight: isLeft ? const Radius.circular(AppSpacing.radiusLg) : Radius.zero,
-                bottomLeft: isLeft ? Radius.zero : const Radius.circular(AppSpacing.radiusLg),
+                topLeft: isLeft
+                    ? const Radius.circular(AppSpacing.radiusLg)
+                    : const Radius.circular(AppSpacing.radiusLg),
+                topRight: isLeft
+                    ? const Radius.circular(AppSpacing.radiusLg)
+                    : Radius.zero,
+                bottomLeft: isLeft
+                    ? Radius.zero
+                    : const Radius.circular(AppSpacing.radiusLg),
                 bottomRight: const Radius.circular(AppSpacing.radiusLg),
               ),
               boxShadow: [
@@ -275,7 +283,9 @@ class QuestionResultsScreen extends ConsumerWidget {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: isMatch ? AppColors.accentGreen : AppColors.accentAmber,
+                  color: isMatch
+                      ? AppColors.accentGreen
+                      : AppColors.accentAmber,
                   letterSpacing: 0.5,
                 ),
               ),

@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
+
+import '../../domain/entities/question.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_spacing.dart';
-import '../domain/entities/question.dart';
 
 /// Question card widget for displaying questions
 class QuestionCard extends StatelessWidget {
   final Question question;
   final String? categoryLabel;
 
-  const QuestionCard({
-    super.key,
-    required this.question,
-    this.categoryLabel,
-  });
+  const QuestionCard({super.key, required this.question, this.categoryLabel});
 
   @override
   Widget build(BuildContext context) {
@@ -83,16 +80,14 @@ class QuestionCard extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       color: AppColors.primary,
-                      borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
+                      borderRadius: BorderRadius.circular(
+                        AppSpacing.radiusFull,
+                      ),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(
-                          Icons.casino,
-                          size: 14,
-                          color: Colors.white,
-                        ),
+                        const Icon(Icons.casino, size: 14, color: Colors.white),
                         const SizedBox(width: AppSpacing.xs),
                         Text(
                           categoryLabel ?? question.category,
@@ -110,8 +105,8 @@ class QuestionCard extends StatelessWidget {
                 Text(
                   question.prompt,
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 // Subtext
                 if (question.subtext != null) ...[
@@ -119,8 +114,8 @@ class QuestionCard extends StatelessWidget {
                   Text(
                     question.subtext!,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppColors.textSecondaryLight,
-                        ),
+                      color: AppColors.textSecondaryLight,
+                    ),
                   ),
                 ],
               ],
