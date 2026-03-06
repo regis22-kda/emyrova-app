@@ -1,0 +1,429 @@
+{
+  "questions": [
+    {
+      "id": "q_001",
+      "category": "Hypothetical",
+      "prompt": "If we won the lottery tomorrow, what is the first 'useless' thing you'd buy?",
+      "type": "free_response",
+      "subtext": "Be honest! No houses or charities—think pure fun.",
+      "imageUrl": "lottery_dreams",
+      "followup_logic": {
+        "on_complete": "Now, compare your answers! Who is the bigger spender?"
+      }
+    },
+    {
+      "id": "q_002",
+      "category": "Hypothetical",
+      "prompt": "If you could instantly master any skill, what would it be?",
+      "type": "free_response",
+      "subtext": "No practice required - just *poof* - you're an expert!",
+      "imageUrl": "skill_mastery"
+    },
+    {
+      "id": "q_003",
+      "category": "Memories",
+      "prompt": "What's your favorite memory of us from this past year?",
+      "type": "free_response",
+      "subtext": "Take a moment to really think about it...",
+      "followup_logic": {
+        "on_complete": "Aww! Let's make more memories like that!"
+      }
+    },
+    {
+      "id": "q_004",
+      "category": "Future Dreams",
+      "prompt": "Where do you see us in 5 years?",
+      "type": "free_response",
+      "subtext": "Dream big! What does your ideal future look like?",
+      "imageUrl": "future_dreams"
+    },
+    {
+      "id": "q_005",
+      "category": "Fun",
+      "prompt": "What's the most embarrassing song on your playlist?",
+      "type": "free_response",
+      "subtext": "We all have one... no judgment here!",
+      "followup_logic": {
+        "on_complete": "Time for a dance party!"
+      }
+    },
+    {
+      "id": "q_006",
+      "category": "Deep",
+      "prompt": "What's something you've never told anyone but want to share now?",
+      "type": "free_response",
+      "subtext": "This is a safe space. I'm here to listen.",
+      "followup_logic": {
+        "on_complete": "Thank you for trusting me with that."
+      }
+    },
+    {
+      "id": "q_007",
+      "category": "Travel",
+      "prompt": "If we could teleport anywhere for dinner tonight, where would you choose?",
+      "type": "free_response",
+      "subtext": "Anywhere in the world - real or imaginary!",
+      "imageUrl": "travel_dinner"
+    },
+    {
+      "id": "q_008",
+      "category": "Childhood",
+      "prompt": "What's your happiest childhood memory?",
+      "type": "free_response",
+      "subtext": "Let's take a trip down memory lane..."
+    },
+    {
+      "id": "q_009",
+      "category": "Love Language",
+      "prompt": "What's one thing I do that makes you feel most loved?",
+      "type": "free_response",
+      "subtext": "It's often the little things...",
+      "followup_logic": {
+        "on_complete": "I'll remember this!"
+      }
+    },
+    {
+      "id": "q_010",
+      "category": "Adventure",
+      "prompt": "What's the most spontaneous thing you'd like us to do together?",
+      "type": "free_response",
+      "subtext": "No limits - what adventure are you dreaming of?",
+      "imageUrl": "adventure_time"
+    },
+    {
+      "id": "q_011",
+      "category": "Food",
+      "prompt": "What's a food combination you love that others might find weird?",
+      "type": "free_response",
+      "subtext": "Pineapple on pizza? We won't judge!",
+      "followup_logic": {
+        "on_complete": "Maybe we should try it sometime!"
+      }
+    },
+    {
+      "id": "q_012",
+      "category": "Entertainment",
+      "prompt": "If our life was a movie, what genre would it be and who would play us?",
+      "type": "free_response",
+      "subtext": "Think about our dynamic...",
+      "imageUrl": "movie_poster"
+    },
+    {
+      "id": "q_013",
+      "category": "Gratitude",
+      "prompt": "What's something small I do that you're grateful for?",
+      "type": "free_response",
+      "subtext": "The little things matter most..."
+    },
+    {
+      "id": "q_014",
+      "category": "Fun",
+      "prompt": "If you had to eat one meal for the rest of your life, what would it be?",
+      "type": "free_response",
+      "subtext": "Choose wisely! This is forever!",
+      "followup_logic": {
+        "on_complete": "Good choice! I won't make you eat it alone."
+      }
+    },
+    {
+      "id": "q_015",
+      "category": "Relationship",
+      "prompt": "What's one thing you've learned about relationships from us?",
+      "type": "free_response",
+      "subtext": "Every relationship teaches us something..."
+    },
+    {
+      "id": "q_016",
+      "category": "Hypothetical",
+      "prompt": "If we could have any superpower as a couple, what should it be?",
+      "type": "free_response",
+      "subtext": "Teleportation? Mind reading? Unlimited snacks?",
+      "imageUrl": "superpower"
+    },
+    {
+      "id": "q_017",
+      "category": "Deep",
+      "prompt": "What's your biggest fear about the future?",
+      "type": "free_response",
+      "subtext": "It's okay to be vulnerable. I'm here.",
+      "followup_logic": {
+        "on_complete": "We'll face it together."
+      }
+    },
+    {
+      "id": "q_018",
+      "category": "Fun",
+      "prompt": "What would your superhero name and power be?",
+      "type": "free_response",
+      "subtext": "Be creative! What makes you unique?"
+    },
+    {
+      "id": "q_019",
+      "category": "Memories",
+      "prompt": "When did you first realize you had feelings for me?",
+      "type": "free_response",
+      "subtext": "Take us back to that moment...",
+      "followup_logic": {
+        "on_complete": "That's such a sweet memory!"
+      }
+    },
+    {
+      "id": "q_020",
+      "category": "Future Dreams",
+      "prompt": "What's one adventure you absolutely want us to have?",
+      "type": "free_response",
+      "subtext": "Big or small - what are you excited about?",
+      "imageUrl": "adventure_bucket"
+    },
+    {
+      "id": "q_021",
+      "category": "Daily Life",
+      "prompt": "What's your ideal lazy Sunday look like?",
+      "type": "free_response",
+      "subtext": "Paint me a picture of perfect relaxation..."
+    },
+    {
+      "id": "q_022",
+      "category": "Love Language",
+      "prompt": "How do you prefer to receive affection?",
+      "type": "free_response",
+      "subtext": "Words, touch, gifts, time, or acts of service?",
+      "followup_logic": {
+        "on_complete": "I'll keep this in mind!"
+      }
+    },
+    {
+      "id": "q_023",
+      "category": "Fun",
+      "prompt": "If we started a business together, what would it be?",
+      "type": "free_response",
+      "subtext": "Think about our combined strengths!",
+      "imageUrl": "business_idea"
+    },
+    {
+      "id": "q_024",
+      "category": "Deep",
+      "prompt": "What does 'home' mean to you?",
+      "type": "free_response",
+      "subtext": "Is it a place, a feeling, or a person?"
+    },
+    {
+      "id": "q_025",
+      "category": "Travel",
+      "prompt": "What's your dream vacation destination?",
+      "type": "free_response",
+      "subtext": "Beach, mountains, city, or something exotic?",
+      "imageUrl": "dream_vacation",
+      "followup_logic": {
+        "on_complete": "Let's add it to our bucket list!"
+      }
+    },
+    {
+      "id": "q_026",
+      "category": "Hypothetical",
+      "prompt": "If you could relive one day of your life, which would it be?",
+      "type": "free_response",
+      "subtext": "What day holds special meaning for you?"
+    },
+    {
+      "id": "q_027",
+      "category": "Relationship",
+      "prompt": "What's your favorite thing about our relationship?",
+      "type": "free_response",
+      "subtext": "What makes us... us?",
+      "followup_logic": {
+        "on_complete": "I love that too!"
+      }
+    },
+    {
+      "id": "q_028",
+      "category": "Fun",
+      "prompt": "What's the weirdest dream you've ever had?",
+      "type": "free_response",
+      "subtext": "Dreams can be so bizarre! Share yours!"
+    },
+    {
+      "id": "q_029",
+      "category": "Childhood",
+      "prompt": "What's something your parents did that you want to continue (or not)?",
+      "type": "free_response",
+      "subtext": "We all pick up things from our upbringing..."
+    },
+    {
+      "id": "q_030",
+      "category": "Deep",
+      "prompt": "What's one thing you want to be remembered for?",
+      "type": "free_response",
+      "subtext": "What legacy do you want to leave?",
+      "imageUrl": "legacy"
+    },
+    {
+      "id": "q_031",
+      "category": "Fun",
+      "prompt": "If animals could talk, which would be the rudest?",
+      "type": "free_response",
+      "subtext": "Think about their personalities...",
+      "followup_logic": {
+        "on_complete": "Haha! I can totally imagine that!"
+      }
+    },
+    {
+      "id": "q_032",
+      "category": "Hypothetical",
+      "prompt": "If you could know the absolute truth to one question, what would you ask?",
+      "type": "free_response",
+      "subtext": "The universe will answer anything..."
+    },
+    {
+      "id": "q_033",
+      "category": "Memories",
+      "prompt": "What's the funniest thing that's happened to us together?",
+      "type": "free_response",
+      "subtext": "Let's have a good laugh about it!",
+      "followup_logic": {
+        "on_complete": "We have the best stories!"
+      }
+    },
+    {
+      "id": "q_034",
+      "category": "Future Dreams",
+      "prompt": "What's a goal you're working towards right now?",
+      "type": "free_response",
+      "subtext": "How can I support you?"
+    },
+    {
+      "id": "q_035",
+      "category": "Love Language",
+      "prompt": "When do you feel most appreciated?",
+      "type": "free_response",
+      "subtext": "Everyone has different ways of feeling valued..."
+    },
+    {
+      "id": "q_036",
+      "category": "Fun",
+      "prompt": "What's your guilty pleasure TV show or movie?",
+      "type": "free_response",
+      "subtext": "No shame! We all have one!",
+      "imageUrl": "tv_marathon"
+    },
+    {
+      "id": "q_037",
+      "category": "Deep",
+      "prompt": "What's something that changed your perspective on life?",
+      "type": "free_response",
+      "subtext": "What moment or realization shifted things for you?"
+    },
+    {
+      "id": "q_038",
+      "category": "Travel",
+      "prompt": "Would you rather explore a new city or relax on a beach?",
+      "type": "free_response",
+      "subtext": "And why?",
+      "followup_logic": {
+        "on_complete": "Good to know for future trips!"
+      }
+    },
+    {
+      "id": "q_039",
+      "category": "Hypothetical",
+      "prompt": "If you could have dinner with any three people (alive or dead), who would they be?",
+      "type": "free_response",
+      "subtext": "Imagine the conversation!",
+      "imageUrl": "dinner_party"
+    },
+    {
+      "id": "q_040",
+      "category": "Relationship",
+      "prompt": "What's one thing we do together that you hope we never stop doing?",
+      "type": "free_response",
+      "subtext": "What tradition is precious to you?",
+      "followup_logic": {
+        "on_complete": "I hope we never stop either!"
+      }
+    },
+    {
+      "id": "q_041",
+      "category": "Fun",
+      "prompt": "What's the worst fashion trend you ever participated in?",
+      "type": "free_response",
+      "subtext": "We all have that one cringe moment...",
+      "followup_logic": {
+        "on_complete": "At least we learned from it!"
+      }
+    },
+    {
+      "id": "q_042",
+      "category": "Deep",
+      "prompt": "What does success mean to you?",
+      "type": "free_response",
+      "subtext": "Is it achievement, happiness, relationships...?"
+    },
+    {
+      "id": "q_043",
+      "category": "Memories",
+      "prompt": "What was your first impression of me?",
+      "type": "free_response",
+      "subtext": "Be honest! How has it changed?",
+      "followup_logic": {
+        "on_complete": "Wow, really? That's interesting!"
+      }
+    },
+    {
+      "id": "q_044",
+      "category": "Future Dreams",
+      "prompt": "What's something you want to teach our future kids (or pets)?",
+      "type": "free_response",
+      "subtext": "What values matter most to you?"
+    },
+    {
+      "id": "q_045",
+      "category": "Fun",
+      "prompt": "If you were a vegetable, which one would you be and why?",
+      "type": "free_response",
+      "subtext": "This is a very important question...",
+      "imageUrl": "vegetable_quiz"
+    },
+    {
+      "id": "q_046",
+      "category": "Hypothetical",
+      "prompt": "If we had to switch lives for a day, what do you think would surprise you most?",
+      "type": "free_response",
+      "subtext": "Walking in each other's shoes..."
+    },
+    {
+      "id": "q_047",
+      "category": "Love Language",
+      "prompt": "What's a small gesture that means a lot to you?",
+      "type": "free_response",
+      "subtext": "It's often the little things that count most..."
+    },
+    {
+      "id": "q_048",
+      "category": "Deep",
+      "prompt": "What's something you're proud of but rarely get to talk about?",
+      "type": "free_response",
+      "subtext": "This is your moment to share!",
+      "followup_logic": {
+        "on_complete": "That's amazing! You should be proud!"
+      }
+    },
+    {
+      "id": "q_049",
+      "category": "Fun",
+      "prompt": "What's the strangest gift you've ever received?",
+      "type": "free_response",
+      "subtext": "Some gifts are... unique!",
+      "imageUrl": "weird_gifts"
+    },
+    {
+      "id": "q_050",
+      "category": "Relationship",
+      "prompt": "How have we grown together since we first met?",
+      "type": "free_response",
+      "subtext": "Reflect on our journey...",
+      "followup_logic": {
+        "on_complete": "We've come so far together!"
+      }
+    }
+  ]
+}

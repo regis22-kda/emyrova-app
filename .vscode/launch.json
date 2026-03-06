@@ -1,0 +1,75 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Emyrova App (Debug)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "debug",
+      "program": "lib/main.dart",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "console": "terminal"
+    },
+    {
+      "name": "Emyrova App (Profile)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "profile",
+      "program": "lib/main.dart",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "console": "terminal"
+    },
+    {
+      "name": "Emyrova App (Release)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "release",
+      "program": "lib/main.dart",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "console": "terminal"
+    },
+    {
+      "name": "Emyrova App - iOS Simulator",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "debug",
+      "program": "lib/main.dart",
+      "args": ["-d", "ios"],
+      "cwd": "${workspaceFolder}",
+      "console": "terminal"
+    },
+    {
+      "name": "Emyrova App - Android Emulator",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "debug",
+      "program": "lib/main.dart",
+      "args": ["-d", "android"],
+      "cwd": "${workspaceFolder}",
+      "console": "terminal"
+    },
+    {
+      "name": "Emyrova App - Web (Chrome)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "debug",
+      "program": "lib/main.dart",
+      "args": ["-d", "chrome"],
+      "cwd": "${workspaceFolder}",
+      "console": "terminal"
+    },
+    {
+      "name": "Emyrova App - macOS",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "debug",
+      "program": "lib/main.dart",
+      "args": ["-d", "macos"],
+      "cwd": "${workspaceFolder}",
+      "console": "terminal"
+    }
+  ]
+}
