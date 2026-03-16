@@ -16,6 +16,13 @@ import 'presentation/screens/this_or_that/this_or_that_screen.dart';
 import 'presentation/screens/whos_more_likely/whos_more_likely_screen.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  
   runApp(
     const ProviderScope(
       child: EmyrovaApp(),

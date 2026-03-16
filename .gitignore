@@ -32,6 +32,7 @@ migrate_working_dir/
 .pub/
 /build/
 /coverage/
+node_modules/
 
 # Symbolication related
 app.*.symbols
@@ -49,3 +50,5 @@ app.*.map.json
 **/GoogleService-Info.plist
 lib/firebase_options.dart
 firebase.json
+serviceAccountKey.json
+seed.js
