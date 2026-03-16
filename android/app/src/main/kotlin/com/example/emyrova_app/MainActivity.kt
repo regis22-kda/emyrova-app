@@ -1,4 +1,4 @@
-package com.example.emyrova_app
+package com.rkStudio.emyrova_app
 
 import io.flutter.embedding.android.FlutterActivity
 
