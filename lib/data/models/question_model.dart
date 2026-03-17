@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import '../../domain/entities/question.dart';
 
@@ -20,6 +21,25 @@ class QuestionModel extends Equatable {
     this.imageUrl,
     this.followupLogic,
   });
+
+  /// Creates a QuestionModel from a Firestore document snapshot
+  /// Firestore structure: id, category, prompt, type, subtext?, imageUrl?, followup (flat string)
+  factory QuestionModel.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    final followup = data['followup'] as String?;
+
+    return QuestionModel(
+      id: doc.id,
+      category: data['category'] as String,
+      prompt: data['prompt'] as String,
+      type: data['type'] as String,
+      subtext: data['subtext'] as String?,
+      imageUrl: data['imageUrl'] as String?,
+      followupLogic: followup != null && followup.isNotEmpty
+          ? FollowupLogicModel(onComplete: followup)
+          : null,
+    );
+  }
 
   /// Creates a QuestionModel from a domain Question entity
   factory QuestionModel.fromEntity(Question question) {

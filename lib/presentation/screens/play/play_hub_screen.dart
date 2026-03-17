@@ -19,6 +19,35 @@ class PlayHubScreen extends StatelessWidget {
         child: ListView(
           padding: const EdgeInsets.all(AppSpacing.lg),
           children: [
+            // Multiplayer Section Header
+            const Padding(
+              padding: EdgeInsets.only(bottom: AppSpacing.md),
+              child: Text(
+                'Multiplayer',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.5,
+                  color: AppColors.primary,
+                ),
+              ),
+            ),
+            // Create/Join Room Card
+            _buildMultiplayerCard(context),
+            const SizedBox(height: AppSpacing.xxl),
+            // Single Player Games Header
+            const Padding(
+              padding: EdgeInsets.only(bottom: AppSpacing.md),
+              child: Text(
+                'Single Player / Pass & Play',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.5,
+                  color: AppColors.textSecondaryLight,
+                ),
+              ),
+            ),
             _buildGameCard(
               context,
               title: 'Question Engine',
@@ -155,6 +184,110 @@ class PlayHubScreen extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildMultiplayerCard(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [AppColors.primary, AppColors.primaryLight],
+        ),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withOpacity(0.3),
+            blurRadius: 12,
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Icon section
+          ClipRRect(
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(AppSpacing.radiusXl),
+            ),
+            child: Container(
+              height: 100,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    AppColors.primary.withOpacity(0.3),
+                    Colors.transparent,
+                  ],
+                ),
+              ),
+              child: const Center(
+                child: Icon(
+                  Icons.people_alt,
+                  size: 56,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+          // Content
+          Padding(
+            padding: const EdgeInsets.all(AppSpacing.md),
+            child: Column(
+              children: [
+                const Text(
+                  'Play Together Online',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                Text(
+                  'Connect with your partner remotely and play together in real-time',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white.withOpacity(0.9),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () => context.push('/room/create'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: AppColors.primary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
+                          ),
+                        ),
+                        child: const Text('Create Room'),
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.md),
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => context.push('/room/join'),
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: Colors.white, width: 2),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
+                          ),
+                        ),
+                        child: const Text('Join Room'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

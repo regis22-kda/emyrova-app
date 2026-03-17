@@ -29,6 +29,11 @@ class AppColors {
   static const Color accentRed = Color(0xFFEF4444);
   static const Color accentBlue = Color(0xFF3B82F6);
   static const Color accentPink = Color(0xFFEC4899);
+
+  // Status colors
+  static const Color error = Color(0xFFEF4444);
+  static const Color success = Color(0xFF10B981);
+  static const Color warning = Color(0xFFF59E0B);
   
   // Gradient colors
   static const List<Color> primaryGradient = [

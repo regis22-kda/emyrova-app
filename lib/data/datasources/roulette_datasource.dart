@@ -1,7 +1,7 @@
 import '../../domain/entities/roulette_option.dart';
 
-/// Abstract repository for roulette operations
-abstract class IRouletteRepository {
+/// Abstract interface for roulette data sources
+abstract class RouletteDataSource {
   /// Gets all roulette options
   Future<List<RouletteOption>> getOptions();
 

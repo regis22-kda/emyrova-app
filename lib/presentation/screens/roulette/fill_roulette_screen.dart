@@ -1,41 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/widgets/app_bottom_nav_bar.dart';
 import '../../../domain/entities/roulette_option.dart';
+import '../../providers/roulette_provider.dart';
 
 /// Fill Roulette screen for customizing options
-class FillRouletteScreen extends StatefulWidget {
+class FillRouletteScreen extends ConsumerStatefulWidget {
   const FillRouletteScreen({super.key});
 
   @override
-  State<FillRouletteScreen> createState() => _FillRouletteScreenState();
+  ConsumerState<FillRouletteScreen> createState() => _FillRouletteScreenState();
 }
 
-class _FillRouletteScreenState extends State<FillRouletteScreen> {
+class _FillRouletteScreenState extends ConsumerState<FillRouletteScreen> {
   final _optionController = TextEditingController();
-  final List<RouletteOption> _options = [
-    const RouletteOption(
-      id: '1',
-      label: 'Pizza Night',
-      icon: 'local_pizza',
-      color: '#8A2CE2',
-    ),
-    const RouletteOption(
-      id: '2',
-      label: 'Sushi Boat',
-      icon: 'ramen_dining',
-      color: '#3B82F6',
-    ),
-    const RouletteOption(
-      id: '3',
-      label: 'Taco Tuesday',
-      icon: 'lunch_dining',
-      color: '#EC4899',
-    ),
-  ];
+  bool _isSaving = false;
 
   final List<Map<String, String>> _presets = [
     {'label': AppStrings.dinner, 'icon': 'restaurant'},
@@ -45,13 +29,95 @@ class _FillRouletteScreenState extends State<FillRouletteScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    // Load options from Firebase when screen initializes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadOptions();
+    });
+  }
+
+  @override
   void dispose() {
     _optionController.dispose();
     super.dispose();
   }
 
+  void _loadOptions() {
+    ref.read(loadRouletteOptionsProvider.future).then((options) {
+      if (mounted) {
+        ref.read(rouletteOptionsStateProvider.notifier).setOptions(options);
+      }
+    }).catchError((error) {
+      if (mounted) {
+        _showErrorSnackbar('Failed to load options: $error');
+      }
+    });
+  }
+
+  void _addOption() {
+    if (_optionController.text.trim().isEmpty) return;
+
+    final newOption = RouletteOption(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      label: _optionController.text.trim(),
+      icon: 'star',
+      color: _generateRandomColor(),
+    );
+
+    setState(() => _isSaving = true);
+
+    // Save to Firebase and update local state
+    ref.read(rouletteRepositoryProvider).saveOption(newOption).then((_) {
+      if (mounted) {
+        ref.read(rouletteOptionsStateProvider.notifier).addOption(newOption);
+        _optionController.clear();
+        setState(() => _isSaving = false);
+      }
+    }).catchError((error) {
+      if (mounted) {
+        _showErrorSnackbar('Failed to add option: $error');
+        setState(() => _isSaving = false);
+      }
+    });
+  }
+
+  void _deleteOption(String id) {
+    setState(() => _isSaving = true);
+
+    // Delete from Firebase and update local state
+    ref.read(rouletteRepositoryProvider).deleteOption(id).then((_) {
+      if (mounted) {
+        ref.read(rouletteOptionsStateProvider.notifier).removeOption(id);
+        setState(() => _isSaving = false);
+      }
+    }).catchError((error) {
+      if (mounted) {
+        _showErrorSnackbar('Failed to delete option: $error');
+        setState(() => _isSaving = false);
+      }
+    });
+  }
+
+  String _generateRandomColor() {
+    final colors = ['#8A2CE2', '#3B82F6', '#EC4899', '#10B981', '#F59E0B', '#EF4444'];
+    return colors[DateTime.now().millisecondsSinceEpoch % colors.length];
+  }
+
+  void _showErrorSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: AppColors.error,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final options = ref.watch(rouletteOptionsStateProvider);
+    final loadState = ref.watch(loadRouletteOptionsProvider);
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -72,15 +138,18 @@ class _FillRouletteScreenState extends State<FillRouletteScreen> {
                     _buildInputField(),
                     const SizedBox(height: AppSpacing.xxl),
                     // Current options list
-                    _buildCurrentOptions(),
+                    if (loadState is AsyncLoading)
+                      _buildLoadingState()
+                    else
+                      _buildCurrentOptions(options),
                     // Empty state
-                    if (_options.isEmpty) _buildEmptyState(),
+                    if (options.isEmpty && loadState is AsyncData) _buildEmptyState(),
                   ],
                 ),
               ),
             ),
             // Sticky footer button
-            _buildStickyFooter(),
+            _buildStickyFooter(options),
           ],
         ),
       ),
@@ -195,6 +264,7 @@ class _FillRouletteScreenState extends State<FillRouletteScreen> {
             Expanded(
               child: TextField(
                 controller: _optionController,
+                enabled: !_isSaving,
                 decoration: InputDecoration(
                   hintText: 'Add a new option...',
                   filled: true,
@@ -232,6 +302,7 @@ class _FillRouletteScreenState extends State<FillRouletteScreen> {
                     vertical: AppSpacing.md,
                   ),
                 ),
+                onSubmitted: (_) => _addOption(),
               ),
             ),
             Container(
@@ -243,11 +314,20 @@ class _FillRouletteScreenState extends State<FillRouletteScreen> {
                 ),
               ),
               child: IconButton(
-                onPressed: _addOption,
-                icon: const Icon(
-                  Icons.add,
-                  color: Colors.white,
-                ),
+                onPressed: _isSaving ? null : _addOption,
+                icon: _isSaving
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
+                      )
+                    : const Icon(
+                        Icons.add,
+                        color: Colors.white,
+                      ),
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(
                   minWidth: 56,
@@ -261,7 +341,7 @@ class _FillRouletteScreenState extends State<FillRouletteScreen> {
     );
   }
 
-  Widget _buildCurrentOptions() {
+  Widget _buildCurrentOptions(List<RouletteOption> options) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -285,7 +365,7 @@ class _FillRouletteScreenState extends State<FillRouletteScreen> {
                 borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
               ),
               child: Text(
-                '${_options.length} OPTIONS',
+                '${options.length} OPTIONS',
                 style: const TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
@@ -296,7 +376,7 @@ class _FillRouletteScreenState extends State<FillRouletteScreen> {
           ],
         ),
         const SizedBox(height: AppSpacing.md),
-        ..._options.map((option) => _buildOptionItem(option)),
+        ...options.map((option) => _buildOptionItem(option)),
       ],
     );
   }
@@ -342,7 +422,7 @@ class _FillRouletteScreenState extends State<FillRouletteScreen> {
           ),
           // Delete button
           IconButton(
-            onPressed: () => _deleteOption(option.id),
+            onPressed: _isSaving ? null : () => _deleteOption(option.id),
             icon: const Icon(
               Icons.delete_outline,
               color: AppColors.textSecondaryLight,
@@ -350,6 +430,17 @@ class _FillRouletteScreenState extends State<FillRouletteScreen> {
             visualDensity: VisualDensity.compact,
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildLoadingState() {
+    return const Center(
+      child: Padding(
+        padding: EdgeInsets.all(AppSpacing.xxl),
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+        ),
       ),
     );
   }
@@ -396,7 +487,7 @@ class _FillRouletteScreenState extends State<FillRouletteScreen> {
     );
   }
 
-  Widget _buildStickyFooter() {
+  Widget _buildStickyFooter(List<RouletteOption> options) {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
@@ -414,7 +505,7 @@ class _FillRouletteScreenState extends State<FillRouletteScreen> {
         child: SizedBox(
           height: AppSpacing.buttonLg,
           child: ElevatedButton(
-            onPressed: _options.length >= 2
+            onPressed: options.length >= 2 && !_isSaving
                 ? () => context.push('/roulette/spinning')
                 : null,
             style: ElevatedButton.styleFrom(
@@ -422,47 +513,35 @@ class _FillRouletteScreenState extends State<FillRouletteScreen> {
                 borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
               ),
               shadowColor: AppColors.shadowLight,
-              elevation: _options.length >= 2 ? 12 : 0,
+              elevation: options.length >= 2 ? 12 : 0,
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(AppStrings.readyToSpin),
-                const SizedBox(width: AppSpacing.sm),
-                const Icon(
-                  Icons.auto_awesome,
-                  size: 20,
-                ),
-              ],
-            ),
+            child: _isSaving
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(AppStrings.readyToSpin),
+                      const SizedBox(width: AppSpacing.sm),
+                      const Icon(
+                        Icons.auto_awesome,
+                        size: 20,
+                      ),
+                    ],
+                  ),
           ),
         ),
       ),
     );
   }
 
-  void _addOption() {
-    if (_optionController.text.trim().isEmpty) return;
-
-    setState(() {
-      _options.add(RouletteOption(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        label: _optionController.text.trim(),
-        icon: 'star',
-        color: '#${(DateTime.now().millisecondsSinceEpoch % 16777215).toRadixString(16).padLeft(6, '0')}',
-      ));
-      _optionController.clear();
-    });
-  }
-
-  void _deleteOption(String id) {
-    setState(() {
-      _options.removeWhere((option) => option.id == id);
-    });
-  }
-
   IconData _getIconData(String iconName) {
-    // Map icon names to IconData
     const icons = {
       'restaurant': Icons.restaurant,
       'movie': Icons.movie,

@@ -24,15 +24,46 @@ class _QuestionEngineScreenState extends ConsumerState<QuestionEngineScreen> {
   bool _isSubmitting = false;
 
   @override
+  void initState() {
+    super.initState();
+    // Load a random question when screen initializes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadRandomQuestion();
+    });
+  }
+
+  @override
   void dispose() {
     _answerController.dispose();
     super.dispose();
+  }
+
+  void _loadRandomQuestion() {
+    ref.read(loadRandomQuestionProvider.future).then((question) {
+      if (mounted) {
+        ref.read(currentQuestionProvider.notifier).setQuestion(question);
+      }
+    }).catchError((error) {
+      if (mounted) {
+        _showErrorSnackbar('Failed to load question: $error');
+      }
+    });
+  }
+
+  void _showErrorSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: AppColors.error,
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final session = ref.watch(gameSessionProvider);
     final currentQuestion = ref.watch(currentQuestionProvider);
+    final questionState = ref.watch(loadRandomQuestionProvider);
 
     return Scaffold(
       body: SafeArea(
@@ -55,12 +86,18 @@ class _QuestionEngineScreenState extends ConsumerState<QuestionEngineScreen> {
                       progressText: '${((session.currentRound / session.totalRounds) * 100).toInt()}% Completed',
                     ),
                     const SizedBox(height: AppSpacing.xxl),
-                    // Question card
-                    if (currentQuestion != null)
+                    // Question card or loading state
+                    if (questionState is AsyncLoading)
+                      _buildLoadingState()
+                    else if (questionState is AsyncError)
+                      _buildErrorState(questionState.error)
+                    else if (currentQuestion != null)
                       QuestionCard(
                         question: currentQuestion,
                         categoryLabel: currentQuestion.category,
-                      ),
+                      )
+                    else
+                      _buildErrorState('No question loaded'),
                     const SizedBox(height: AppSpacing.xl),
                     // Answer input
                     _buildAnswerInput(session),
@@ -75,6 +112,89 @@ class _QuestionEngineScreenState extends ConsumerState<QuestionEngineScreen> {
         ),
       ),
       bottomNavigationBar: const AppBottomNavBar(currentPath: '/play'),
+    );
+  }
+
+  Widget _buildLoadingState() {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.xxl),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
+        border: Border.all(
+          color: AppColors.primary.withOpacity(0.2),
+        ),
+      ),
+      child: const Column(
+        children: [
+          CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+          ),
+          SizedBox(height: AppSpacing.lg),
+          Text(
+            'Loading question...',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: AppColors.textSecondaryLight,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorState(Object? error) {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.xxl),
+      decoration: BoxDecoration(
+        color: AppColors.error.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
+        border: Border.all(
+          color: AppColors.error.withOpacity(0.3),
+        ),
+      ),
+      child: Column(
+        children: [
+          Icon(
+            Icons.error_outline,
+            size: 48,
+            color: AppColors.error,
+          ),
+          const SizedBox(height: AppSpacing.md),
+          Text(
+            'Failed to load question',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: AppColors.error,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            error?.toString() ?? 'Unknown error',
+            style: TextStyle(
+              fontSize: 14,
+              color: AppColors.textSecondaryLight,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          SizedBox(
+            height: AppSpacing.buttonMd,
+            child: ElevatedButton(
+              onPressed: _loadRandomQuestion,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+                ),
+              ),
+              child: const Text('Retry'),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
