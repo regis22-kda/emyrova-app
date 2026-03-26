@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/services/auth_service.dart';
+import '../../core/services/player_settings_service.dart';
 import '../../data/datasources/firebase_question_datasource.dart';
 import '../../data/datasources/firebase_room_datasource.dart';
 import '../../data/repositories/question_repository_impl.dart';
@@ -49,6 +50,52 @@ final compareAnswersProvider = Provider<CompareAnswers>((ref) {
   return const CompareAnswers();
 });
 
+/// Player names data class
+class PlayerNames {
+  final String player1Name;
+  final String player2Name;
+
+  const PlayerNames({
+    required this.player1Name,
+    required this.player2Name,
+  });
+}
+
+/// Provider for managing player names
+final playerNamesProvider = StateNotifierProvider<PlayerNamesNotifier, PlayerNames>((ref) {
+  return PlayerNamesNotifier();
+});
+
+/// State notifier for player names
+class PlayerNamesNotifier extends StateNotifier<PlayerNames> {
+  final PlayerSettingsService _settingsService = PlayerSettingsService();
+
+  PlayerNamesNotifier() : super(const PlayerNames(player1Name: 'Player 1', player2Name: 'Player 2')) {
+    _loadPlayerNames();
+  }
+
+  /// Load player names from SharedPreferences
+  Future<void> _loadPlayerNames() async {
+    final names = await _settingsService.getPlayerNames();
+    state = PlayerNames(
+      player1Name: names['player1']!,
+      player2Name: names['player2']!,
+    );
+  }
+
+  /// Update player names
+  Future<void> updatePlayerNames(String player1Name, String player2Name) async {
+    await _settingsService.savePlayerNames(player1Name, player2Name);
+    state = PlayerNames(player1Name: player1Name, player2Name: player2Name);
+  }
+
+  /// Reset to default names
+  Future<void> resetToDefaults() async {
+    await _settingsService.resetPlayerNames();
+    state = const PlayerNames(player1Name: 'Player 1', player2Name: 'Player 2');
+  }
+}
+
 /// Provider for loading questions with state management
 final loadQuestionsProvider = FutureProvider<List<Question>>((ref) async {
   final repository = ref.watch(contentRepositoryProvider);
@@ -75,11 +122,21 @@ class GameSessionNotifier extends StateNotifier<GameSession> {
         const GameSession(
           id: 'session_1',
           players: [
-            Player(id: 'player_1', name: 'Alex', avatarColor: '#FF9800'),
-            Player(id: 'player_2', name: 'Sarah', avatarColor: '#E91E63'),
+            Player(id: 'player_1', name: 'Player 1', avatarColor: '#FF9800'),
+            Player(id: 'player_2', name: 'Player 2', avatarColor: '#E91E63'),
           ],
         ),
       );
+
+  /// Update session with custom player names
+  void updatePlayerNames(String player1Name, String player2Name) {
+    state = state.copyWith(
+      players: [
+        state.players[0].copyWith(name: player1Name),
+        state.players[1].copyWith(name: player2Name),
+      ],
+    );
+  }
 
   /// Check if the game is complete (all rounds finished)
   bool get isGameComplete => state.currentRound > state.totalRounds || state.isComplete;

@@ -7,6 +7,7 @@ import '../../../core/constants/app_spacing.dart';
 import '../../../core/widgets/app_bottom_nav_bar.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/room_provider.dart';
+import '../settings/player_name_settings_screen.dart';
 
 /// Profile screen showing user information and settings
 class ProfileScreen extends ConsumerWidget {
@@ -364,6 +365,14 @@ class ProfileScreen extends ConsumerWidget {
         const SizedBox(height: AppSpacing.md),
         _buildSettingItem(
           context,
+          icon: Icons.edit,
+          title: 'Edit Player Names',
+          subtitle: 'Customize player names for games',
+          onTap: () => _showEditNamesDialog(context),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        _buildSettingItem(
+          context,
           icon: Icons.logout,
           title: 'Sign Out',
           subtitle: 'Sign out of your account',
@@ -496,6 +505,13 @@ class ProfileScreen extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+
+  void _showEditNamesDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => const PlayerNameSettingsDialog(),
     );
   }
 }

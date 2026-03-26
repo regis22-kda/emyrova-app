@@ -7,6 +7,8 @@ import '../../../core/constants/app_strings.dart';
 import '../../../core/widgets/app_bottom_nav_bar.dart';
 import '../../../core/widgets/player_avatar.dart';
 import '../../../domain/entities/player.dart';
+import '../../providers/game_provider.dart';
+import '../settings/player_name_settings_screen.dart';
 
 /// Home screen widget
 class HomeScreen extends ConsumerStatefulWidget {
@@ -17,13 +19,15 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  final List<Player> _players = const [
-    Player(id: 'player_1', name: 'Alex', avatarColor: '#FF9800'),
-    Player(id: 'player_2', name: 'Sarah', avatarColor: '#E91E63'),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final playerNames = ref.watch(playerNamesProvider);
+    
+    final players = [
+      Player(id: 'player_1', name: playerNames.player1Name, avatarColor: '#FF9800'),
+      Player(id: 'player_2', name: playerNames.player2Name, avatarColor: '#E91E63'),
+    ];
+    
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -48,12 +52,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Widget _buildHeader() {
+    final playerNames = ref.watch(playerNamesProvider);
+    
     return Padding(
       padding: const EdgeInsets.all(AppSpacing.lg),
       child: Row(
         children: [
-          // Player avatars
-          PlayerAvatarsGroup(players: _players, size: 48),
+          // Player avatars with edit on tap
+          GestureDetector(
+            onTap: _showEditNamesDialog,
+            child: Tooltip(
+              message: 'Tap to edit names',
+              child: PlayerAvatarsGroup(players: [
+                Player(id: 'player_1', name: playerNames.player1Name, avatarColor: '#FF9800'),
+                Player(id: 'player_2', name: playerNames.player2Name, avatarColor: '#E91E63'),
+              ], size: 48),
+            ),
+          ),
           // App name
           const Expanded(
             child: Padding(
@@ -397,5 +412,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       default:
         return Icons.help_outline;
     }
+  }
+
+  void _showEditNamesDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => const PlayerNameSettingsDialog(),
+    );
   }
 }

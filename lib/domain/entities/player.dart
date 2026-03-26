@@ -36,4 +36,19 @@ class Player extends Equatable {
 
   @override
   List<Object?> get props => [id, name, avatarUrl, avatarColor];
+
+  /// Creates a copy of this Player with updated fields
+  Player copyWith({
+    String? id,
+    String? name,
+    String? avatarUrl,
+    String? avatarColor,
+  }) {
+    return Player(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
+      avatarColor: avatarColor ?? this.avatarColor,
+    );
+  }
 }
