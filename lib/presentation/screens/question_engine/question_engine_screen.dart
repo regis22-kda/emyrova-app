@@ -26,9 +26,29 @@ class _QuestionEngineScreenState extends ConsumerState<QuestionEngineScreen> {
   @override
   void initState() {
     super.initState();
-    // Load a random question when screen initializes
+    // Reset _isSubmitting to false when screen initializes
+    _isSubmitting = false;
+
+    // Load a random question and handle game flow when screen initializes
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadRandomQuestion();
+      if (mounted) {
+        final notifier = ref.read(gameSessionProvider.notifier);
+        final currentQuestion = ref.read(currentQuestionProvider);
+
+        // Check if game is complete - navigate to results
+        if (notifier.isGameComplete) {
+          context.push('/question-engine/results');
+          return;
+        }
+
+        // Only load a new question if:
+        // 1. No question is loaded yet, OR
+        // 2. The round number changed (new round started)
+        if (currentQuestion == null) {
+          _loadRandomQuestion();
+        }
+        // If question exists, keep it for both players to answer
+      }
     });
   }
 
@@ -39,6 +59,9 @@ class _QuestionEngineScreenState extends ConsumerState<QuestionEngineScreen> {
   }
 
   void _loadRandomQuestion() {
+    // Force refresh by invalidating the provider cache first
+    ref.invalidate(loadRandomQuestionProvider);
+    
     ref.read(loadRandomQuestionProvider.future).then((question) {
       if (mounted) {
         ref.read(currentQuestionProvider.notifier).setQuestion(question);
@@ -48,6 +71,10 @@ class _QuestionEngineScreenState extends ConsumerState<QuestionEngineScreen> {
         _showErrorSnackbar('Failed to load question: $error');
       }
     });
+  }
+
+  void _clearAnswerField() {
+    _answerController.clear();
   }
 
   void _showErrorSnackbar(String message) {
@@ -383,13 +410,21 @@ class _QuestionEngineScreenState extends ConsumerState<QuestionEngineScreen> {
       final notifier = ref.read(gameSessionProvider.notifier);
       notifier.addAnswer(_answerController.text.trim());
 
+      // Clear the answer field for next player
+      _clearAnswerField();
       setState(() => _isSubmitting = false);
 
       // Check if all players have answered
       final session = ref.read(gameSessionProvider);
       if (session.allPlayersAnswered) {
-        // Navigate to results
-        context.push('/question-engine/results');
+        // Check if game is complete (all rounds done)
+        if (notifier.isGameComplete) {
+          // Navigate to final results
+          context.push('/question-engine/results');
+        } else {
+          // Navigate to round results to show answers
+          context.push('/question-engine/results');
+        }
       } else {
         // Show pass to next player screen
         context.push('/question-engine/pass-turn');

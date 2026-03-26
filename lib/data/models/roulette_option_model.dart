@@ -28,7 +28,7 @@ class RouletteOptionModel extends Equatable {
     return RouletteOptionModel(
       id: doc.id,
       label: data['label'] as String,
-      icon: data['icon'] as String,
+      icon: (data['emoji'] ?? data['icon']) as String,
       color: data['color'] as String,
       presetCategory: data['preset_category'] as String?,
       isActive: data['is_active'] as bool? ?? true,
@@ -62,7 +62,7 @@ class RouletteOptionModel extends Equatable {
   Map<String, dynamic> toFirestore() {
     return {
       'label': label,
-      'icon': icon,
+      'emoji': icon,
       'color': color,
       'preset_category': presetCategory,
       'is_active': isActive,

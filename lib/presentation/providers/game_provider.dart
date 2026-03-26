@@ -81,18 +81,41 @@ class GameSessionNotifier extends StateNotifier<GameSession> {
         ),
       );
 
+  /// Check if the game is complete (all rounds finished)
+  bool get isGameComplete => state.currentRound > state.totalRounds || state.isComplete;
+
+  /// Check if current round is the last round
+  bool get isLastRound => state.currentRound >= state.totalRounds;
+
+  /// Start a new game session
+  void startNewGame() {
+    state = GameSession(
+      id: 'session_${DateTime.now().millisecondsSinceEpoch}',
+      players: state.players,
+      currentPlayerIndex: 0,
+      currentRound: 1,
+      totalRounds: state.totalRounds,
+      answers: {},
+      isComplete: false,
+    );
+  }
+
+  /// Advance to the next player
   void nextPlayer() {
     state = state.nextPlayer();
   }
 
+  /// Add an answer from the current player
   void addAnswer(String answer) {
     state = state.addAnswer(state.currentPlayer.id, answer);
   }
 
+  /// Start the next round
   void nextRound() {
     state = state.nextRound();
   }
 
+  /// Reset session to initial state
   void resetSession() {
     state = const GameSession(
       id: 'session_1',
@@ -101,6 +124,11 @@ class GameSessionNotifier extends StateNotifier<GameSession> {
         Player(id: 'player_2', name: 'Sarah', avatarColor: '#E91E63'),
       ],
     );
+  }
+
+  /// Clear answers for the current round
+  void clearAnswers() {
+    state = state.copyWith(answers: {});
   }
 }
 

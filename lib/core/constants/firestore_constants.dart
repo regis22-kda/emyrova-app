@@ -6,6 +6,7 @@ class FirestoreConstants {
   static const String questionsCollection = 'questions';
   static const String roomsCollection = 'rooms';
   static const String rouletteOptionsCollection = 'roulette_options';
+  static const String historyCollection = 'history';
 
   /// Field names for questions
   static const String fieldIsActive = 'is_active';

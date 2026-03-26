@@ -63,12 +63,10 @@ class PassThePhoneScreen extends ConsumerWidget {
                   ),
                 ],
               ),
-              // Main content
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Icon
                     Container(
                       width: 80,
                       height: 80,
@@ -83,7 +81,6 @@ class PassThePhoneScreen extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: AppSpacing.xxl),
-                    // Title
                     Text(
                       'Pass to ${nextPlayer.name}',
                       style: const TextStyle(
@@ -93,7 +90,6 @@ class PassThePhoneScreen extends ConsumerWidget {
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: AppSpacing.md),
-                    // Subtitle
                     Text(
                       "It's their turn to dominate the round!",
                       style: TextStyle(
@@ -106,15 +102,14 @@ class PassThePhoneScreen extends ConsumerWidget {
                     // Player avatars
                     _buildPlayerTransition(currentPlayer, nextPlayer),
                     const SizedBox(height: AppSpacing.xxl),
-                    // Game info card
                     _buildGameInfoCard(context, session),
                     const SizedBox(height: AppSpacing.xl),
-                    // Ready button
                     SizedBox(
                       width: double.infinity,
                       height: AppSpacing.buttonLg,
                       child: ElevatedButton(
                         onPressed: () {
+                          ref.read(gameSessionProvider.notifier).nextPlayer();
                           context.push('/question-engine');
                         },
                         style: ElevatedButton.styleFrom(
@@ -158,60 +153,64 @@ class PassThePhoneScreen extends ConsumerWidget {
   }
 
   Widget _buildPlayerTransition(Player currentPlayer, Player nextPlayer) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        // Previous player (faded)
-        Positioned(
-          left: 0,
-          child: Opacity(
-            opacity: 0.4,
-            child: Transform.scale(
-              scale: 0.9,
-              child: PlayerAvatar(player: currentPlayer, size: 96),
-            ),
-          ),
-        ),
-        // Next player (highlighted)
-        Positioned(
-          right: 0,
-          child: Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.primary.withOpacity(0.3),
-                  blurRadius: 20,
-                  spreadRadius: 4,
-                ),
-              ],
-            ),
-            child: PlayerAvatar(
-              player: nextPlayer,
-              size: 120,
-              isActive: true,
-              badge: Container(
-                width: 32,
-                height: 32,
-                decoration: const BoxDecoration(
-                  color: AppColors.accentGreen,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(Icons.check, color: Colors.white, size: 18),
+    return SizedBox(
+      width: 200,
+      height: 150,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Previous player (faded)
+          Positioned(
+            left: 0,
+            child: Opacity(
+              opacity: 0.4,
+              child: Transform.scale(
+                scale: 0.9,
+                child: PlayerAvatar(player: currentPlayer, size: 96),
               ),
             ),
           ),
-        ),
-        // Arrow
-        Positioned(
-          right: 100,
-          child: Icon(
-            Icons.chevron_right,
-            size: 48,
-            color: AppColors.primary.withOpacity(0.3),
+          // Next player (highlighted)
+          Positioned(
+            right: 0,
+            child: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primary.withOpacity(0.3),
+                    blurRadius: 20,
+                    spreadRadius: 4,
+                  ),
+                ],
+              ),
+              child: PlayerAvatar(
+                player: nextPlayer,
+                size: 120,
+                isActive: true,
+                badge: Container(
+                  width: 32,
+                  height: 32,
+                  decoration: const BoxDecoration(
+                    color: AppColors.accentGreen,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.check, color: Colors.white, size: 18),
+                ),
+              ),
+            ),
           ),
-        ),
-      ],
+          // Arrow
+          Positioned(
+            right: 100,
+            child: Icon(
+              Icons.chevron_right,
+              size: 48,
+              color: AppColors.primary.withOpacity(0.3),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

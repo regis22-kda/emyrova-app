@@ -5,24 +5,26 @@ import 'package:go_router/go_router.dart';
 
 import 'core/services/auth_service.dart';
 import 'core/theme/app_theme.dart';
+import 'domain/entities/game_history.dart';
 import 'firebase_options.dart';
 import 'presentation/providers/auth_provider.dart';
 import 'presentation/screens/history/history_screen.dart';
 import 'presentation/screens/home/home_screen.dart';
 import 'presentation/screens/play/play_hub_screen.dart';
 import 'presentation/screens/profile/profile_screen.dart';
+import 'presentation/screens/question_engine/final_results_screen.dart';
 import 'presentation/screens/question_engine/pass_the_phone_screen.dart';
 import 'presentation/screens/question_engine/question_engine_screen.dart';
 import 'presentation/screens/question_engine/results_screen.dart';
+import 'presentation/screens/room/create_room_screen.dart';
+import 'presentation/screens/room/join_room_screen.dart';
+import 'presentation/screens/room/multiplayer_results_screen.dart';
+import 'presentation/screens/room/waiting_room_screen.dart';
 import 'presentation/screens/roulette/fill_roulette_screen.dart';
 import 'presentation/screens/roulette/results_screen.dart';
 import 'presentation/screens/roulette/spinning_roulette_screen.dart';
 import 'presentation/screens/this_or_that/this_or_that_screen.dart';
 import 'presentation/screens/whos_more_likely/whos_more_likely_screen.dart';
-import 'presentation/screens/room/create_room_screen.dart';
-import 'presentation/screens/room/join_room_screen.dart';
-import 'presentation/screens/room/waiting_room_screen.dart';
-import 'presentation/screens/room/multiplayer_results_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -118,6 +120,14 @@ final GoRouter _router = GoRouter(
       path: '/question-engine/results',
       name: 'question-engine-results',
       builder: (context, state) => const QuestionResultsScreen(),
+    ),
+    GoRoute(
+      path: '/question-engine/final-results',
+      name: 'question-engine-final-results',
+      builder: (context, state) {
+        final history = state.extra as GameHistory;
+        return FinalResultsScreen(history: history);
+      },
     ),
     // Roulette routes
     GoRoute(

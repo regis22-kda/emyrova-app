@@ -1,22 +1,22 @@
-import '../entities/history_entry.dart';
+import '../entities/game_history.dart';
 
-/// Abstract repository for history operations
+/// Abstract repository for game history operations
 abstract class IHistoryRepository {
-  /// Gets all history entries
-  Future<List<HistoryEntry>> getHistory();
+  /// Get all history entries for the current user
+  Future<List<GameHistory>> getAllHistory();
 
-  /// Gets history entries by game type
-  Future<List<HistoryEntry>> getHistoryByType(GameType type);
+  /// Get a specific history entry by ID
+  Future<GameHistory?> getHistoryById(String id);
 
-  /// Gets history entries from today
-  Future<List<HistoryEntry>> getTodayHistory();
+  /// Save a new history entry
+  Future<void> saveHistory(GameHistory history);
 
-  /// Saves a new history entry
-  Future<void> saveEntry(HistoryEntry entry);
+  /// Delete a history entry
+  Future<void> deleteHistory(String id);
 
-  /// Deletes a history entry
-  Future<void> deleteEntry(String id);
+  /// Get the latest history entry
+  Future<GameHistory?> getLatestHistory();
 
-  /// Clears all history
-  Future<void> clearHistory();
+  /// Get history entries with pagination
+  Future<List<GameHistory>> getHistoryPage({int limit = 10, int offset = 0});
 }

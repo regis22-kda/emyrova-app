@@ -7,17 +7,19 @@ import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/widgets/app_bottom_nav_bar.dart';
 import '../../../core/widgets/player_avatar.dart';
+import '../../../domain/entities/game_history.dart';
 import '../../../domain/entities/game_session.dart';
 import '../../../domain/usecases/compare_answers.dart';
 import '../../providers/game_provider.dart';
+import 'final_results_screen.dart';
 
-/// Results reveal screen for Question Engine
 class QuestionResultsScreen extends ConsumerWidget {
   const QuestionResultsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final session = ref.watch(gameSessionProvider);
+    final currentQuestion = ref.watch(currentQuestionProvider);
     final compareAnswers = ref.watch(compareAnswersProvider);
     final resultType = compareAnswers(session);
 
@@ -34,7 +36,6 @@ class QuestionResultsScreen extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Question number badge
                     Center(
                       child: Container(
                         padding: const EdgeInsets.symmetric(
@@ -58,17 +59,13 @@ class QuestionResultsScreen extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: AppSpacing.lg),
-                    // Question card
-                    _buildQuestionCard(context, session),
+                    _buildQuestionCard(context, session, currentQuestion),
                     const SizedBox(height: AppSpacing.xl),
-                    // Answers comparison
                     _buildAnswersComparison(context, session),
                     const SizedBox(height: AppSpacing.xl),
-                    // Result badge
                     _buildResultBadge(context, resultType),
                     const SizedBox(height: AppSpacing.xxl),
-                    // Action buttons
-                    _buildActionButtons(context, ref),
+                    _buildActionButtons(context, ref, currentQuestion),
                   ],
                 ),
               ),
@@ -111,8 +108,7 @@ class QuestionResultsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildQuestionCard(BuildContext context, GameSession session) {
-    // In a real app, this would come from the current question provider
+  Widget _buildQuestionCard(BuildContext context, GameSession session, dynamic currentQuestion) {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
@@ -120,9 +116,9 @@ class QuestionResultsScreen extends ConsumerWidget {
         borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
         border: Border.all(color: AppColors.primary.withOpacity(0.1)),
       ),
-      child: const Text(
-        '"If we won the lottery tomorrow, what is the first \'useless\' thing you\'d buy?"',
-        style: TextStyle(
+      child: Text(
+        currentQuestion?.prompt ?? 'No question available',
+        style: const TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.bold,
           height: 1.4,
@@ -134,29 +130,39 @@ class QuestionResultsScreen extends ConsumerWidget {
   Widget _buildAnswersComparison(BuildContext context, GameSession session) {
     final answers = session.answers.values.toList();
 
+    if (answers.isEmpty) {
+      return const Center(child: Text('No answers submitted yet'));
+    }
+
     return Column(
       children: [
-        // Player 1 answer
         _buildPlayerAnswer(
           context,
           session.players[0],
           answers
               .firstWhere(
                 (a) => a.playerId == session.players[0].id,
-                orElse: () => answers.first,
+                orElse: () => PlayerAnswer(
+                  playerId: '',
+                  answer: 'No answer yet',
+                  timestamp: DateTime.now(),
+                ),
               )
               .answer,
           isLeft: true,
         ),
         const SizedBox(height: AppSpacing.lg),
-        // Player 2 answer
         _buildPlayerAnswer(
           context,
           session.players[1],
           answers
               .firstWhere(
                 (a) => a.playerId == session.players[1].id,
-                orElse: () => answers.last,
+                orElse: () => PlayerAnswer(
+                  playerId: '',
+                  answer: 'No answer yet',
+                  timestamp: DateTime.now(),
+                ),
               )
               .answer,
           isLeft: false,
@@ -311,20 +317,31 @@ class QuestionResultsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildActionButtons(BuildContext context, WidgetRef ref) {
+  Widget _buildActionButtons(BuildContext context, WidgetRef ref, dynamic currentQuestion) {
+    final session = ref.watch(gameSessionProvider);
+    final notifier = ref.read(gameSessionProvider.notifier);
+    final isGameComplete = notifier.isGameComplete;
+    final isLastRound = notifier.isLastRound;
+
     return Column(
       children: [
-        // Next question button
         SizedBox(
           height: AppSpacing.buttonLg,
           child: ElevatedButton(
             onPressed: () {
-              // Navigate to next question or end game
-              final notifier = ref.read(gameSessionProvider.notifier);
-              notifier.nextRound();
-              context.push('/question-engine');
+              if (isGameComplete) {
+                final history = _createGameHistory(ref, session, currentQuestion);
+                context.push('/question-engine/final-results', extra: history);
+              } else {
+                // Clear answers and start next round
+                notifier.clearAnswers();
+                ref.read(currentQuestionProvider.notifier).clear();
+                notifier.nextRound();
+                context.push('/question-engine');
+              }
             },
             style: ElevatedButton.styleFrom(
+              backgroundColor: isLastRound || isGameComplete ? AppColors.success : null,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
               ),
@@ -334,59 +351,97 @@ class QuestionResultsScreen extends ConsumerWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text(AppStrings.nextQuestion),
+                Icon(
+                  isGameComplete ? Icons.celebration : Icons.check,
+                  size: 20,
+                ),
                 const SizedBox(width: AppSpacing.sm),
-                const Icon(Icons.arrow_forward, size: 20),
+                Text(
+                  isGameComplete 
+                      ? 'Finish Game' 
+                      : isLastRound 
+                          ? 'Complete' 
+                          : AppStrings.nextQuestion,
+                ),
               ],
             ),
           ),
         ),
         const SizedBox(height: AppSpacing.md),
-        // Share and favorite buttons
-        Row(
-          children: [
-            Expanded(
-              child: SizedBox(
+        // Round info or share buttons
+        if (!isGameComplete) ...[
+          Text(
+            isLastRound 
+                ? 'Final Round ${session.currentRound} of ${session.totalRounds}' 
+                : 'Round ${session.currentRound} of ${session.totalRounds}',
+            style: TextStyle(
+              fontSize: 12,
+              color: isLastRound ? AppColors.success : AppColors.textSecondaryLight,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ] else ...[
+          // Game complete - show share buttons
+          Row(
+            children: [
+              Expanded(
+                child: SizedBox(
+                  height: AppSpacing.buttonMd,
+                  child: OutlinedButton(
+                    onPressed: () {
+                      // Share functionality
+                    },
+                    style: OutlinedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                          AppSpacing.radiusLg,
+                        ),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.share, size: 20),
+                        const SizedBox(width: AppSpacing.sm),
+                        const Text(AppStrings.shareResult),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: AppSpacing.md),
+              SizedBox(
+                width: AppSpacing.buttonMd,
                 height: AppSpacing.buttonMd,
                 child: OutlinedButton(
                   onPressed: () {
-                    // Share functionality
+                    // Favorite/save functionality
                   },
                   style: OutlinedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
                     ),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.share, size: 20),
-                      const SizedBox(width: AppSpacing.sm),
-                      const Text(AppStrings.shareResult),
-                    ],
-                  ),
+                  child: const Icon(Icons.favorite_border, size: 20),
                 ),
               ),
-            ),
-            const SizedBox(width: AppSpacing.md),
-            SizedBox(
-              width: AppSpacing.buttonMd,
-              height: AppSpacing.buttonMd,
-              child: OutlinedButton(
-                onPressed: () {
-                  // Favorite/save functionality
-                },
-                style: OutlinedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-                  ),
-                ),
-                child: const Icon(Icons.favorite_border, size: 20),
-              ),
-            ),
-          ],
-        ),
+            ],
+          ),
+        ],
       ],
+    );
+  }
+
+  GameHistory _createGameHistory(WidgetRef ref, GameSession session, dynamic currentQuestion) {
+    // TODO(regis): Track all rounds' questions and answers
+    return GameHistory(
+      id: 'game_${DateTime.now().millisecondsSinceEpoch}',
+      date: DateTime.now(),
+      totalRounds: session.totalRounds,
+      chemistryScore: 75.0,
+      rounds: [],
+      partnerAName: session.players[0].name,
+      partnerBName: session.players[1].name,
     );
   }
 }
